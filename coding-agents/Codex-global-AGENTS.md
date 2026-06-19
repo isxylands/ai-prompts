@@ -26,9 +26,11 @@
 
 # Git 操作规范
 
-* 若修改了本地 Git 仓库文件，最终回复必须给出一条符合 Conventional Commits 的提交信息建议，格式为：`type(scope): 中文摘要`。提交信息只作为建议，不自动提交。
-* 未经用户明确要求，不要执行 `git commit`、`git push`、`git rebase`、`git reset`、`git clean`、`force push`、删除分支等有副作用的 Git 操作。
-* 用户明确要求提交或推送时，执行前必须先检查当前分支、工作区状态、暂存区状态、upstream、远端差异和未推送提交，避免把无关改动一起提交或推送。
-* 用户明确要求 `push` 时，默认采用多人协作安全流程：先 `fetch` 获取远端状态，再判断本地分支与 upstream 的 ahead/behind/diverged 关系；若需要同步远端，优先使用 rebase 而不是产生不必要的 merge commit。
-* 不要自动执行普通 `force push`。只有在用户明确要求、风险已说明、且确认目标分支无误时，才可考虑使用 `--force-with-lease`。
-* 遇到以下情况时不要自动继续，应停止并向用户说明现状、风险和建议方案：存在未提交改动或未暂存改动；rebase/merge 冲突；当前分支没有 upstream；当前分支是 `main`、`master`、`release` 等共享或保护分支；远端已被他人更新且改动关系不清晰；测试、lint、type check 未通过；需要删除、覆盖或重写历史；权限不足或远端拒绝推送。
+- 先按本轮改动分类。`纯文档变更` 指只改 `README`、`AGENTS.md`、`devdoc/`、`docs/`、计划、评审、跟踪记录等文档，不涉及源码、配置、构建脚本、依赖定义、CI/CD、测试代码、生成逻辑或运行环境；一旦混入这些内容，就按非纯文档变更处理。
+- 纯文档变更：执行 `git diff --check`，确认暂存范围只包含本轮文档后，默认直接在当前工作分支本地 commit；不需要 build/test，不额外建分支，不 push。
+- 非纯文档变更：提交前必须完成与改动直接相关的最低限度验证，如 lint、build、type check、unit test 中的适用项。验证未运行或未通过时，不自动 commit；最终说明原因、风险、建议验证命令，并给出提交信息建议。
+- 提交信息使用 Conventional Commits，格式为 `type(scope): 中文摘要`。若当前任务关联 JIRA Issue，必须包含 JIRA-ID，例如：`docs(kind): DEVOPS-6030 自适应Kind改造方案`。
+- commit 前必须检查当前分支、工作区状态、暂存区、upstream 和未推送提交；只暂存本轮相关文件。发现无关改动、用户改动或无法隔离的暂存内容时，先停止并说明风险。
+- 严禁默认 push。只有用户在本轮明确要求 push 时才允许推送；此前授权不得延续。push 前必须已有本地 commit，先 `fetch` 并判断 ahead/behind/diverged；需要同步远端时只使用 `git pull --rebase`，严禁默认 merge pull。
+- 未经用户明确要求，不执行 `git commit --amend`、`rebase`、`reset`、`clean`、删除分支、改写历史或普通 force push。即使用户要求改写历史，也必须先说明风险并确认目标分支；如确需强推，只能考虑 `--force-with-lease`。
+- rebase/merge 冲突、测试失败、远端已更新且关系不清、当前分支无 upstream 且需要 push、权限不足或远端拒绝时，立即停止 Git 操作，说明现状、风险和建议下一步；严禁自行覆盖冲突或删除不明改动。
