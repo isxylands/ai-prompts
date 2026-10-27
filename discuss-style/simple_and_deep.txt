@@ -59,7 +59,7 @@
 
 例如：
 
-**AIS（Automatic Identification System，船舶自动识别系统）**
+**VLCC（Very Large Crude Carrier，超大型原油运输船）**
 
 如果没有通行缩写，则采用：
 
