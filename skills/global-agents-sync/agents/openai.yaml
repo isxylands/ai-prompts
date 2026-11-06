@@ -1,0 +1,4 @@
+interface:
+  display_name: "全局 AGENTS.md 维护"
+  short_description: "修改全局规则并同步 Git 备份，校验一致性与提交范围，默认仅本地提交"
+  default_prompt: "使用 $global-agents-sync 按本轮要求修改全局 AGENTS.md，同步仓库备份并本地提交，不 push。"
